@@ -1,4 +1,4 @@
-## Symmetry for Backbone.js
+## Symmetry for Backbone.js [![Build Status](https://secure.travis-ci.org/Two-Screen/symmetry-bb.png)](http://travis-ci.org/Two-Screen/symmetry-bb)
 
 Creating diffs for Backbone.js models with Symmetry is easy. Applying them,
 however, is not. This module implements a best effort patch function.
