@@ -1,0 +1,24 @@
+{
+    "name": "symmetry-bb",
+    "description": "Apply Symmetry patches to Backbone models",
+    "author": "Stéphan Kochen <stephan@kochen.nl>",
+    "license" : "MIT",
+    "version": "0.2.0",
+    "homepage": "https://github.com/Two-Screen/symmetry-bb",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/Two-Screen/symmetry-bb.git"
+    },
+    "keywords": ["diff", "patch", "sync", "backbone"],
+    "dependencies": {
+        "underscore": "1",
+        "symmetry": "0.2"
+    },
+    "devDependencies": {
+        "backbone": "0.9",
+        "tape": "0.2"
+    },
+    "scripts": {
+        "test": "node ./test.js"
+    }
+}
