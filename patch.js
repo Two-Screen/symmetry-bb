@@ -25,7 +25,7 @@ SymmetryBB.patchObject = function(obj, patch) {
 
 // Apply an object patch to a plain object.
 // Tries to preserve existing models and collections.
-Symmetry.patchPlainObject = function(obj, patch) {
+SymmetryBB.patchPlainObject = function(obj, patch) {
     var i, key, val, prev;
 
     var r = patch.r;
