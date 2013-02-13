@@ -3,7 +3,7 @@
     "description": "Apply Symmetry patches to Backbone models",
     "author": "Stéphan Kochen <stephan@kochen.nl>",
     "license" : "MIT",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "homepage": "https://github.com/Two-Screen/symmetry-bb",
     "repository": {
         "type": "git",
