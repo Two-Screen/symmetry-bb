@@ -91,9 +91,9 @@ SymmetryBB.patchPlainArray = SymmetryBB.patchArray;
 // Apply an array patch. (`t:'a'`)
 SymmetryBB.patchArray = function(arr, patch) {
     if (arr.models)
-        SymmetryBB.patchCollection(arr, patch);
+        this.patchCollection(arr, patch);
     else
-        SymmetryBB.patchPlainArray(arr, patch);
+        this.patchPlainArray(arr, patch);
 };
 
 // Apply an array patch to a collection.
