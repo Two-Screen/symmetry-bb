@@ -19,6 +19,8 @@ else {
 SymmetryBB.patchObject = function(obj, patch) {
     if (obj.attributes)
         this.patchModel(obj, patch);
+    else if (obj.models)
+        this.patchCollectionFromObject(obj, patch);
     else
         this.patchPlainObject(obj, patch);
 };
@@ -85,19 +87,52 @@ SymmetryBB.patchModel = function(obj, patch) {
     obj._changing = false;
 };
 
+// Apply an object patch to a collection.
+SymmetryBB.patchCollectionFromObject = function(obj, patch) {
+    var i, key, val, prev;
+
+    var r = patch.r;
+    if (r)
+        obj.remove(r);
+
+    var s = patch.s;
+    if (s) {
+        var idAttribute = obj.model.prototype.idAttribute;
+        var toAdd = [];
+        for (key in s) {
+            val = s[key];
+            val[idAttribute] = key;
+
+            var existing = obj.get(key);
+            if (existing)
+                this.resetModel(existing, val);
+            else
+                toAdd.push(val);
+        }
+        obj.add(toAdd);
+    }
+
+    var p = patch.p;
+    if (p) {
+        for (key in p) {
+            this.patchValue(obj.get(key), p[key]);
+        }
+    }
+};
+
 // Alias what we're going to override.
 SymmetryBB.patchPlainArray = SymmetryBB.patchArray;
 
 // Apply an array patch. (`t:'a'`)
 SymmetryBB.patchArray = function(arr, patch) {
     if (arr.models)
-        this.patchCollection(arr, patch);
+        this.patchCollectionFromArray(arr, patch);
     else
         this.patchPlainArray(arr, patch);
 };
 
 // Apply an array patch to a collection.
-SymmetryBB.patchCollection = function(arr, patch) {
+SymmetryBB.patchCollectionFromArray = function(arr, patch) {
     var i, idx, splice;
     var models = arr.models;
 
@@ -135,15 +170,21 @@ SymmetryBB.patchCollection = function(arr, patch) {
 
 // Try to reset an existing model or collection, instead of replacing it.
 SymmetryBB.resetExisting = function(prev, val) {
+    if (!val || !prev) return false;
     if (Array.isArray(val)) {
-        if (prev && prev.models) {
+        if (prev.models) {
             prev.reset(val);
             return true;
         }
+        return false;
     }
-    else if (val && typeof(val) === 'object') {
-        if (prev && prev.attributes) {
+    else if (typeof(val) === 'object') {
+        if (prev.attributes) {
             this.resetModel(prev, val);
+            return true;
+        }
+        else if (prev.models) {
+            this.resetCollectionFromObject(prev, val);
             return true;
         }
     }
@@ -158,6 +199,18 @@ SymmetryBB.resetModel = function(model, attrs) {
         r: _.without(oldKeys, newKeys),
         s: attrs
     });
+};
+
+// Reset a collection from an object.
+SymmetryBB.resetCollectionFromObject = function(collection, obj) {
+    var idAttribute = collection.model.prototype.idAttribute;
+    var models = [];
+    for (var key in obj) {
+        var val = obj[key];
+        val[idAttribute] = key;
+        models.push(val);
+    }
+    collection.reset(models);
 };
 
 })();

@@ -58,7 +58,7 @@ test('deep model reset', function(t) {
     t.end();
 });
 
-test('collection change', function(t) {
+test('array collection change', function(t) {
     var collection = new Backbone.Collection([{foo:5}]);
 
     checkEvents(t, collection, function() {
@@ -81,7 +81,7 @@ test('collection change', function(t) {
     t.end();
 });
 
-test('collection move', function(t) {
+test('array collection move', function(t) {
     var collection = new Backbone.Collection([{id:1}, {id:2}, {id:3}]);
 
     checkEvents(t, collection, function() {
@@ -94,7 +94,7 @@ test('collection move', function(t) {
     t.end();
 });
 
-test('deep collection reset', function(t) {
+test('deep array collection reset', function(t) {
     var collection = new Backbone.Collection([{foo:5}]);
     var obj = {collection:collection};
 
@@ -104,6 +104,43 @@ test('deep collection reset', function(t) {
     t.equal(collection.length, 1, 'has one model after reset');
     t.ok(collection.at(0).has('bar'), 'has bar after reset');
     t.notOk(collection.at(0).has('foo'), 'no foo after reset');
+
+    t.end();
+});
+
+test('object collection change', function(t) {
+    var collection = new Backbone.Collection([{id:'one', foo:5}]);
+
+    checkEvents(t, collection, function() {
+        symbb.patch(collection, {t:'o', p:{one:{t:'o', s:{foo:8}}}});
+    }, ['change:foo', 'change']);
+    t.equal(collection.get('one').get('foo'), 8, 'foo changed');
+
+    checkEvents(t, collection, function() {
+        symbb.patch(collection, {t:'o', s:{two:{bar:5}}});
+    }, ['add']);
+    t.equal(collection.length, 2, 'has two models after add');
+    t.equal(collection.get('two').get('bar'), 5, 'second model has attribute bar');
+
+    checkEvents(t, collection, function() {
+        symbb.patch(collection, {t:'o', r:['one']});
+    }, ['remove']);
+    t.equal(collection.length, 1, 'has one model after remove');
+    t.equal(collection.get('two').get('bar'), 5, 'still has second model');
+
+    t.end();
+});
+
+test('deep object collection reset', function(t) {
+    var collection = new Backbone.Collection([{id:'one', foo:5}]);
+    var obj = {collection:collection};
+
+    checkEvents(t, collection, function() {
+        symbb.patch(obj, {t:'o', s:{collection:{two:{bar:8}}}});
+    }, ['reset']);
+    t.equal(collection.length, 1, 'has one model after reset');
+    t.ok(collection.get('two').has('bar'), 'has second model after reset');
+    t.notOk(collection.get('one'), 'no first model after reset');
 
     t.end();
 });
