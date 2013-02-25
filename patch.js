@@ -7,7 +7,7 @@ var _, Symmetry, SymmetryBB;
 if (typeof(module) !== 'undefined') {
     _ = require('underscore');
     Symmetry = require('symmetry');
-    SymmetryBB = module.exports = Object.create(Symmetry);
+    SymmetryBB = module.exports = _.clone(Symmetry);
 }
 else {
     _ = window._;
