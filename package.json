@@ -15,8 +15,8 @@
         "symmetry": "0.2"
     },
     "devDependencies": {
-        "backbone": "0.9",
-        "tape": "0.2"
+        "backbone": "1",
+        "tape": "1"
     },
     "scripts": {
         "test": "node ./test.js"
