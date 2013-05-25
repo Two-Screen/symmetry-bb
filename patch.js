@@ -171,7 +171,7 @@ SymmetryBB.patchCollectionFromArray = function(arr, patch) {
 // Try to reset an existing model or collection, instead of replacing it.
 SymmetryBB.resetExisting = function(prev, val) {
     if (!val || !prev) return false;
-    if (Array.isArray(val)) {
+    if (_.isArray(val)) {
         if (prev.models) {
             prev.reset(val);
             return true;
