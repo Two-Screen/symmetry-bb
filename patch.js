@@ -133,37 +133,56 @@ SymmetryBB.patchArray = function(arr, patch) {
 
 // Apply an array patch to a collection.
 SymmetryBB.patchCollectionFromArray = function(arr, patch) {
-    var i, idx, splice;
+    var num, idx;
+    var num2, idx2;
+    var model;
     var models = arr.models;
 
     var p = patch.p;
     if (p) {
-        for (idx in p) {
+        for (idx in p)
             this.patchValue(models[idx], p[idx]);
-        }
     }
 
     var s = patch.s;
     if (s) {
-        // Remove old models first, to prevent ID conflicts.
-        var numSplices = s.length;
-        for (i = 0; i < numSplices; i++) {
-            splice = s[i];
-            idx = splice[0];
+        // Create a new models array with splices applied.
+        var added = [];
+        models = models.slice(0);
+        for (idx = 0, num = s.length; idx < num; idx++) {
+            var splice = s[idx];
 
-            var toRemove = models.slice(idx, idx + splice[1]);
-            arr.remove(toRemove);
+            // Prepare models in the splice.
+            for (idx2 = 2, num2 = splice.length; idx2 < num2; idx2++) {
+                if (!(splice[idx2] = arr._prepareModel(splice[idx2])))
+                    throw new Error("Patch failed: invalid model");
+            }
+
+            // Apply splice.
+            var removed = models.splice.apply(models, splice);
+
+            // Collect adds, simulate removes now.
+            added = added.concat(splice.slice(2));
+            arr.remove(removed);
         }
 
-        // Then add the new models.
-        var offset = 0;
-        for (i--; i >= 0; i--) {
-            splice = s[i];
-            idx = splice[0] + offset;
+        // Swap the models array.
+        arr.models = models;
+        arr.length = models.length;
 
-            var toAdd = splice.slice(2);
-            arr.add(toAdd, { at: idx });
-            offset += toAdd.length - splice[1];
+        // Simulate adds.
+        var dummy = {};
+        for (idx = 0, num = added.length; idx < num; idx++) {
+            model = added[idx];
+
+            // Listen to added models' events, and index
+            // models for lookup by `id` and by `cid`.
+            model.on('all', arr._onModelEvent, arr);
+            arr._byId[model.cid] = model;
+            if (model.id != null) arr._byId[model.id] = model;
+
+            // Trigger `add` event.
+            model.trigger('add', model, arr, dummy);
         }
     }
 };
