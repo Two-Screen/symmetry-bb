@@ -12,7 +12,7 @@
     "keywords": ["diff", "patch", "sync", "backbone"],
     "dependencies": {
         "underscore": "1",
-        "symmetry": "0.2"
+        "symmetry": "0.3"
     },
     "devDependencies": {
         "backbone": "1",
